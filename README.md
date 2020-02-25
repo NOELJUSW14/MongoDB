@@ -7,21 +7,21 @@ In this assignment, you'll create a web app that lets users view and leave comme
 
 ### Before You Begin
 
-1. Create a GitHub repo for this assignment and clone it to your computer. Any name will do -- just make sure it's related to this project in some fashion.
+1. Create a GitHub repo for this assignment and clone it to your computer. Any name will do -- just make sure it's related to this project in some fashion. (check)
 
-2. Run `npm init`. When that's finished, install and save these npm packages:
+2. Run `npm init`. When that's finished, install and save these npm packages: (check)
 
-   1. express
+   1. express (check)xx
 
-   2. express-handlebars
+   2. express-handlebars (check)xx
 
-   3. mongoose
+   3. mongoose (check)xx
 
-   4. cheerio
+   4. cheerio (check)xx
 
-   5. axios
+   5. axios (check)xx
 
-3. **NOTE**: If you want to earn complete credit for your work, you must use all five of these packages in your assignment.
+3. **NOTE**: If you want to earn complete credit for your work, you must use all five of these packages in your assignment. (check)
 
 4. In order to deploy your project to Heroku, you must set up an mLab provision. mLab is remote MongoDB database that Heroku supports natively. Follow these steps to get it running:
 
@@ -67,6 +67,7 @@ Having an active and healthy commit history on GitHub is important for your futu
 ### Submission on BCS
 
 * **This assignment must be deployed.** * Please submit both the deployed Heroku link to your homework AND the link to the Github Repository!
+
 
 ## Instructions
 
