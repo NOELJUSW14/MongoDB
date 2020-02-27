@@ -3,7 +3,7 @@ const logger = require('morgan')
 const mongoose = require('mongoose')
 const axios = require('axios')
 const cheerio = require('cheerio')
-
+const routes = require('./controller/controller')
 // Initialize Express
 const express = require('express')
 const app = express()
@@ -13,6 +13,7 @@ app.use(logger('dev'))
 // Parse request body as JSON
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(routes)
 
 // Make public a static folder
 app.use(express.static('public'))
