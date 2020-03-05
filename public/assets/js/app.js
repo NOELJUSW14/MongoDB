@@ -85,5 +85,5 @@ $(function() {
     $('#bodyinput').val('')
   })
 
-  // console.log(Comics)
+  
 })

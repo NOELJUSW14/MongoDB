@@ -11,16 +11,22 @@ const db = require('../models')
 // Route for retrieving all Comics from the db
 router.get('/', (req, res) => {
   // Find all Comics
-  console.log("hello")
+  console.log('hello')
   db.Comics.find({}).exec((err, data) => {
     console.log(data)
     if (err) {
       res.send(err)
     } else {
-      var comicObj = {
-        Comics: data,
-      }
-      res.render('index', comicObj)
+      // for (var i = 0; i < data.length; i++) {
+      //   // Display the apropos information on the page
+      //   var comicObj = {
+      //      "id": data[i]._id,
+      //       "Title": data[i].title,
+      //       "Author": data[i].author,
+      //       "Link": data[i].link
+      //   }
+      //   return
+      res.render('index', { data: data })
     }
   })
 })
