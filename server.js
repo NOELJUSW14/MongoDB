@@ -1,8 +1,6 @@
 //Dependencies
 const logger = require('morgan')
 const mongoose = require('mongoose')
-const axios = require('axios')
-const cheerio = require('cheerio')
 const routes = require('./controller/controller')
 // Initialize Express
 const express = require('express')
@@ -35,7 +33,7 @@ const port = process.env.PORT || 3000
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 const MONGODB_URI =
   process.env.MONGODB_URI || 'mongodb://localhost/ComicScraper'
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 var link = mongoose.connection
 link.on('error', console.error.bind(console, 'connection error:'))
 link.once('open', function() {
@@ -44,5 +42,5 @@ link.once('open', function() {
 
 //connect to the port
 app.listen(port, function() {
-  console.log('Listening on PORT ' + port +"!")
+  console.log('Listening on PORT ' + port + '!')
 })

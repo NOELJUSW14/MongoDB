@@ -7,84 +7,94 @@ const cheerio = require('cheerio')
 const db = require('../models')
 
 // Create all our routes and set up logic within those routes where required.
-router.get('/', function(req, res) {
-  res.redirect('/scrape')
+
+// Route for retrieving all Comics from the db
+router.get('/', (req, res) => {
+  // Find all Comics
+  console.log("hello")
+  db.Comics.find({}).exec((err, data) => {
+    console.log(data)
+    if (err) {
+      res.send(err)
+    } else {
+      var comicObj = {
+        Comics: data,
+      }
+      res.render('index', comicObj)
+    }
+  })
 })
 
 router.get('/scrape', function(req, res) {
-  axios.get('https://www.gocomics.com/comics/a-to-z').then(function(response) {
+  // Making a request
+  var siteReq = axios.get('https://www.gocomics.com/comics/a-to-z')
+  siteReq.then(res => {
     // Load the HTML into cheerio and save it to a variable
     // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-    var $ = cheerio.load(response.data)
+    const $ = cheerio.load(res.data)
 
     // An empty array to save the data that we'll scrape
     var comicsResults = []
 
-    $('.gc-blended-link').each(function(i, element) {
+    $('.gc-blended-link').each((i, element) => {
       var dateArray = []
       var results = {}
       // Add the text and href of every link, and save them as properties of the result object
-      results.title = $(this)
+      results.title = $(element)
         .find('h4')
         .text()
-      results.author = $(this)
+      results.author = $(element)
         //put exact id
         .find('.media-subheading')
         .text()
-      results.link = $(this).attr('href')
-      dateArray = results.link.split('/').slice(-3)
-      results.date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
-      axios.get('https://www.gocomics.com/'+ results.link).then(function(response) {
-    // Load the HTML into cheerio and save it to a variable
-    // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-    var $ = cheerio.load(response.data)
-    results.image = $('.comic__image').find(".img-fluid").attr("src")
-      })
-      // Create a new Article using the `results` object built from scraping
-      db.Comics.create(results)
-        .then(function(dbComics) {
-          // View the added result in the console
-          console.log(dbComics)
-        })
-        .catch(function(err) {
-          // If an error occurred, log it
-          console.log(err)
-        })
-      // console.log(results)
-    })
-    res.redirect('/comics')
-  })
-})
+      results.link = $(element).attr('href')
 
-// Route for retrieving all Comics from the db
-router.get('/comics', function(req, res) {
-  // Find all Comics
-  db.Comics.find({})
-    .then(function(dbComics) {
-      // If all Comics are successfully found, send them back to the client
-      res.json(dbComics)
+      //dateArray = results.link.split('/').slice(-3);
+      //date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
+      //find the image of comic strip
+      //axios.get('https://www.gocomics.com/'+ link).then(response => {
+      // Load the HTML into cheerio and save it to a variable
+      // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
+      //var $ = cheerio.load(response.data);
+      //var imageRes = {};
+      //const image = $('.comic__image').find(".img-fluid").attr("src")
+      //image.each(i, element)
     })
-    .catch(function(err) {
-      // If an error occurs, send the error back to the client
-      res.json(err)
-    })
+    // Create a new Article using the `results` object built from scraping
+    db.Comics.create(results)
+      .then(dbComics => {
+        // View the added result in the console
+        console.log(dbComics + '`\n`--------------')
+      })
+      .catch(function(err) {
+        // If an error occurred, log it
+        console.log(err)
+      })
+    // console.log(results)
+  })
+
+  res.redirect('/')
 })
 
 // Route for grabbing a specific Comic by id, populate it with it's comments
 router.get('/comics/:id', function(req, res) {
   // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-  Comics.findOne({ _id: req.params.id })
+  db.Comics.findOne({ _id: req.params.id })
     // ..and populate all of the notes associated with it
     .populate('comments')
-    .then(function(dbComics) {
-      // If we were able to successfully find an Article with the given id, send it back to the client
-      res.json(dbComics)
-    })
-    .catch(function(err) {
-      // If an error occurred, send it to the client
-      res.json(err)
+    .exec((err, doc) => {
+      if (err) {
+        console.log(err)
+      } else {
+        var commentsObj = {
+          Comics: doc,
+        }
+        console.log(commentsObj)
+        res.render('comments', commentsObj)
+      }
     })
 })
+
 // Route for saving/updating an Article's associated Note
 router.post('/comics/:id', function(req, res) {
   // Create a new note and pass the req.body to the entry
