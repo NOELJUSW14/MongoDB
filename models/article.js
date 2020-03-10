@@ -1,37 +1,35 @@
-var mongoose = require("mongoose");
+var mongoose = require('mongoose')
 
 // Save a reference to the Schema constructor
-var Schema = mongoose.Schema;
+var Schema = mongoose.Schema
 
 // Using the Schema constructor, create a new Character Schema object
 
 // This is similar to a Sequelize model
-var ComicsSchema = new Schema({
+var ArticleSchema = new Schema({
   // `title` must be of type String
   title: {
     type: String,
-    required: true
-  },
-  author: {
-    type: String,
+    required: true,
   },
   date: {
     type: String,
-    required: true
+    required: true,
   },
-  image: {
-    type: Array
+  link: {
+    type: String,
+    required: true,
   },
-  comment:[
+  comment: [
     {
-    type: Schema.Types.ObjectId,
-    ref: "Comment"
-  }
-  ]
-});
+      type: Schema.Types.ObjectId,
+      ref: 'Comment',
+    },
+  ],
+})
 
 // This creates our model from the above schema, using mongoose's model method
-var Comics = mongoose.model("Comics", ComicsSchema);
+var Article = mongoose.model('Article', ArticleSchema)
 
 // Export the Comics model
-module.exports = Comics;
+module.exports = Article

@@ -1,15 +1,10 @@
 //Dependencies
-//Dependencies
 const logger = require('morgan')
 const mongoose = require('mongoose')
-const axios = require('axios')
-const cheerio = require('cheerio')
 
 // Initialize Express
 const express = require('express')
 const app = express()
-var routes = require('./controller/controller')
-app.use('/', routes)
 
 // Use morgan logger for logging requests
 app.use(logger('dev'))

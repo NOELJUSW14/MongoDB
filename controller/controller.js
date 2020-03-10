@@ -2,23 +2,17 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 const cheerio = require('cheerio')
-// const mongoose = require('mongoose');
-const mongojs = require('mongojs')
 
 // Initialize Express
 var app = express()
-
 // Database configuration
 // Save the URL of our database as well as the name of our collection
-var databaseUrl = 'ComicScraper'
-var collections = ['comics']
+const Comments = require('../models/comments')
+const Article = require('../models/article')
 
-// Use mongojs to hook the database to the db variable
-var db = mongojs(databaseUrl, collections)
-
-db.on('error', function(error) {
-  console.log('Database Error:', error)
-})
+// db.on('error', function(error) {
+//   console.log('Database Error:', error)
+// })
 
 // Root: Displays a simple "Hello World" message (no mongo required)
 app.get('/', function(req, res) {
@@ -28,7 +22,7 @@ app.get('/', function(req, res) {
 // All: Send JSON response with all animals
 app.get('/all', function(req, res) {
   // Query: In our database, go to the animals collection, then "find" everything
-  db.comics.find({}, function(err, data) {
+  Article.find({}, function(err, data) {
     // Log any errors if the server encounters one
     if (err) {
       console.log(err)
@@ -40,10 +34,10 @@ app.get('/all', function(req, res) {
 })
 // TODO: Implement the remaining two routes
 //At the "/name" path, display every entry in the animals collection, sorted by name
-app.get('/comics', function(req, res) {
+app.get('/article', function(req, res) {
   // Query: In our database, go to the animals collection, then "find" everything,
   // but this time, sort it by name (1 means ascending order)
-  db.comics.find().sort({ title: -1 }, function(err, found) {
+  Article.find().sort({ title: -1 }, function(err, found) {
     // Log any errors if the server encounters one
     if (err) {
       console.log(err)
@@ -59,7 +53,7 @@ app.get('/comics', function(req, res) {
 app.get('/date', function(req, res) {
   // Query: In our database, go to the animals collection, then "find" everything,
   // but this time, sort it by weight (-1 means descending order)
-  db.comics.find().sort({ date: -1 }, function(err, found) {
+  Article.find().sort({ date: -1 }, function(err, found) {
     // Log any errors if the server encounters one
     if (err) {
       console.log(err)
