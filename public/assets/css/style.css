@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
   background-size: 600px;
   font-family: 'Oswald', sans-serif;
@@ -36,4 +37,9 @@ main {
 }
 .topnav {
   background-color: #635f60;
+=======
+.active {
+  color: #ee6e73;
+  font-weight: 300;
+>>>>>>> c22ac4590cd439ee663a2a71d9e70adc12dff2da
 }

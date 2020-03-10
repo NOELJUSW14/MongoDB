@@ -7,8 +7,11 @@ Mongo Notes
 
 **Insert Data into Database
 
+<<<<<<< HEAD
 db.students.insert({name: 'Steve', row:3, os:'Mac', hobbies:['Coding', 'Reading', 'Running'] })
 
+=======
+>>>>>>> c22ac4590cd439ee663a2a71d9e70adc12dff2da
 Example:
 `db.places.insert({"continent": "Africa", "country":"Morocco", "majorcities": ["Casablanca", "Fez", "Marrakech"]})`
 or

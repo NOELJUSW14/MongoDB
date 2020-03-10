@@ -1,4 +1,5 @@
 <div>
+<<<<<<< HEAD
   <h1 class='card z-depth-3 center-align'>
     News Scraper
   </h1>
@@ -28,3 +29,27 @@
     {{/each}}
   </div>
 </div>
+=======
+  <h1 class="card center-align">Latest Sunday Funnies</h1>
+  <div class="row">
+    <h3 class"card center-align">Click "Add" to save</h3> 
+  </div>
+</div>
+  <div class="row">
+    <div class="col s8 left-align">
+      <div class="row" id="comics">
+        {{#each comics }}
+      
+        <div class="card-panel">
+          <h3>{{this.title}}</h3>
+          <h4>{{this.author}}</h4>
+          <a class="links" alt="links">{{this.link}}</a>
+          <a href="/readComics/{{this._id}}" class="comic-link">Go to Comics</a>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  
+>>>>>>> c22ac4590cd439ee663a2a71d9e70adc12dff2da
