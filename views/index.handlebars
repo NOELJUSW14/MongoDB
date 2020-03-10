@@ -1,32 +1,23 @@
-
+<div>
   <h1 class="card center-align">Latest Sunday Funnies</h1>
   <div class="row">
     <h3 class"card center-align">Click "Add" to save</h3> 
   </div>
+</div>
   <div class="row">
     <div class="col s8 left-align">
       <div class="row" id="comics">
-        {{!-- // $("#comics").append("<p comic-id='" + data[i]._id + "'>" + data[i].title + "by" + data[i].author +"<br />" + data[i].link + "</p>"); --}}
-
-        {{!-- {{#if  Comics}}
-        {{#each Comics}} --}}
-{{data}}
-{{!-- <p>{{{Comics.title}}}</p>
-{{/each}} --}}
-        {{!-- {{#each Comics.comment}}
-        <div class="card">
-            <p id="nameComment">{{name}}</p>
-            <p>{{body}}</p>
+        {{#each comics }}
+      
+        <div class="card-panel">
+          <h3>{{this.title}}</h3>
+          <h4>{{this.author}}</h4>
+          <a class="links" alt="links">{{this.link}}</a>
+          <a href="/readComics/{{this._id}}" class="comic-link">Go to Comics</a>
         </div>
         {{/each}}
-        {{else}}
-        <p>No Comments</p>
-        {{/if}} --}}
-
       </div>
     </div>
   </div>
-  <div class="form-group">
-    <h2>Add a Comic</h2>
-    <button type="submit">Add Comic</button>
-  </div>
+
+  

@@ -2,126 +2,150 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 const cheerio = require('cheerio')
+// const mongoose = require('mongoose');
+const mongojs = require('mongojs')
 
-// Import the model to use its database functions.
-const db = require('../models')
+// Initialize Express
+var app = express()
 
-// Create all our routes and set up logic within those routes where required.
+// Database configuration
+// Save the URL of our database as well as the name of our collection
+var databaseUrl = 'ComicScraper'
+var collections = ['comics']
 
-// Route for retrieving all Comics from the db
-router.get('/', (req, res) => {
-  // Find all Comics
-  console.log('hello')
-  db.Comics.find({}).exec((err, data) => {
-    console.log(data)
+// Use mongojs to hook the database to the db variable
+var db = mongojs(databaseUrl, collections)
+
+db.on('error', function(error) {
+  console.log('Database Error:', error)
+})
+
+// Root: Displays a simple "Hello World" message (no mongo required)
+app.get('/', function(req, res) {
+  res.send('Welcome to Comics Scraper')
+})
+
+// All: Send JSON response with all animals
+app.get('/all', function(req, res) {
+  // Query: In our database, go to the animals collection, then "find" everything
+  db.comics.find({}, function(err, data) {
+    // Log any errors if the server encounters one
     if (err) {
-      res.send(err)
+      console.log(err)
     } else {
-      // for (var i = 0; i < data.length; i++) {
-      //   // Display the apropos information on the page
-      //   var comicObj = {
-      //      "id": data[i]._id,
-      //       "Title": data[i].title,
-      //       "Author": data[i].author,
-      //       "Link": data[i].link
-      //   }
-      //   return
-      res.render('index', { data: data })
+      // Otherwise, send the result of this query to the browser
+      res.json(data)
+    }
+  })
+})
+// TODO: Implement the remaining two routes
+//At the "/name" path, display every entry in the animals collection, sorted by name
+app.get('/comics', function(req, res) {
+  // Query: In our database, go to the animals collection, then "find" everything,
+  // but this time, sort it by name (1 means ascending order)
+  db.comics.find().sort({ title: -1 }, function(err, found) {
+    // Log any errors if the server encounters one
+    if (err) {
+      console.log(err)
+    }
+    // Otherwise, send the result of this query to the browser
+    else {
+      res.json(found)
     }
   })
 })
 
-router.get('/scrape', function(req, res) {
-  // Making a request
-  var siteReq = axios.get('https://www.gocomics.com/comics/a-to-z')
-  siteReq.then(res => {
-    // Load the HTML into cheerio and save it to a variable
-    // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-    const $ = cheerio.load(res.data)
-
-    // An empty array to save the data that we'll scrape
-    var comicsResults = []
-
-    $('.gc-blended-link').each((i, element) => {
-      var dateArray = []
-      var results = {}
-      // Add the text and href of every link, and save them as properties of the result object
-      results.title = $(element)
-        .find('h4')
-        .text()
-      results.author = $(element)
-        //put exact id
-        .find('.media-subheading')
-        .text()
-      results.link = $(element).attr('href')
-
-      //dateArray = results.link.split('/').slice(-3);
-      //date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2]);
-      //find the image of comic strip
-      //axios.get('https://www.gocomics.com/'+ link).then(response => {
-      // Load the HTML into cheerio and save it to a variable
-      // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
-      //var $ = cheerio.load(response.data);
-      //var imageRes = {};
-      //const image = $('.comic__image').find(".img-fluid").attr("src")
-      //image.each(i, element)
-    })
-    // Create a new Article using the `results` object built from scraping
-    db.Comics.create(results)
-      .then(dbComics => {
-        // View the added result in the console
-        console.log(dbComics + '`\n`--------------')
-      })
-      .catch(function(err) {
-        // If an error occurred, log it
-        console.log(err)
-      })
-    // console.log(results)
+// 4. At the "/weight" path, display every entry in the animals collection, sorted by weight
+app.get('/date', function(req, res) {
+  // Query: In our database, go to the animals collection, then "find" everything,
+  // but this time, sort it by weight (-1 means descending order)
+  db.comics.find().sort({ date: -1 }, function(err, found) {
+    // Log any errors if the server encounters one
+    if (err) {
+      console.log(err)
+    }
+    // Otherwise, send the result of this query to the browser
+    else {
+      res.json(found)
+    }
   })
-
-  res.redirect('/')
 })
 
-// Route for grabbing a specific Comic by id, populate it with it's comments
-router.get('/comics/:id', function(req, res) {
-  // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-  db.Comics.findOne({ _id: req.params.id })
-    // ..and populate all of the notes associated with it
-    .populate('comments')
-    .exec((err, doc) => {
-      if (err) {
-        console.log(err)
-      } else {
-        var commentsObj = {
-          Comics: doc,
+// 1: Name: Send JSON response sorted by name in ascending order, e.g. GET "/name"
+
+// 2: Weight: Send JSON response sorted by weight in descending order, , e.g. GET "/weight"
+// First, tell the console what server3.js is doing
+console.log(
+  '\n******************************************\n' +
+    'Look at the image of every award winner in \n' +
+    'one of the pages of `awwwards.com`. Then,\n' +
+    "grab the image's source URL." +
+    '\n******************************************\n',
+)
+
+app.get('/scrape', function(req, res) {
+  // Making a request via axios for "https://comics.azcentral.com/" Garfields Page
+  axios
+    .get('https://comics.azcentral.com/slideshow?comic=ga')
+    .then(function(response) {
+      // Load the body of the HTML into cheerio
+      var $ = cheerio.load(response.data)
+
+      // Empty array to save our scraped data
+      var results = []
+
+      // With cheerio, find each div-tag with the class "comics-wrapper" and loop through the results
+      $('.comics-wrapper').each(function(i, element) {
+        // Save the text of the div-tag with class comic-display-name, span- tag with class "comic-name" as "title"
+        var title = $(element)
+          .find('.comic-display-name')
+          .find('.comic-name')
+          .text()
+        // Save the text of the div-tag with class comic-display-name, span-tag with class "comic-date-r" as "date"
+        var date = $(element)
+          .find('.comic-display-name')
+          .find('.comic-date-r')
+          .text()
+
+        // Find the img-tag's, and save it's attr "src" as "link"
+        var link = $(element)
+          .find('img')
+          .attr('src')
+
+        // If this found element had both a title and a link
+        if (title && date && link) {
+          // Insert the data in the Comics db
+          db.comics.insert({
+            title: title,
+            date: date,
+            link: link,
+          }),
+            function(err, inserted) {
+              if (err) {
+                // Log the error if one is encountered during the query
+                console.log(err)
+              } else {
+                // Otherwise, log the inserted data
+                console.log(inserted)
+              }
+            }
         }
-        console.log(commentsObj)
-        res.render('comments', commentsObj)
-      }
+      })
     })
+  // Send a "Scrape Complete" message to the browser
+  res.send('Scrape Complete')
 })
 
-// Route for saving/updating an Article's associated Note
-router.post('/comics/:id', function(req, res) {
-  // Create a new note and pass the req.body to the entry
-  Comment.create(req.body)
-    .then(function(dbComment) {
-      // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
-      // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-      // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-      return Comics.findOneAndUpdate(
-        { _id: req.params.id },
-        { comments: dbComment._id },
-        { new: true },
-      )
-    })
-    .then(function(dbComment) {
-      // If we were able to successfully update an Article, send it back to the client
-      res.json(dbComment)
-    })
-    .catch(function(err) {
-      // If an error occurred, send it to the client
-      res.json(err)
-    })
-})
+// // Make an object with data we scraped for this div and push it to the results array
+//       results.push({
+//         title: title,
+//         date: date,
+//         link: link,
+//       })
+//     })
+
+//     // After looping through each div.comics-wrapper, log the results
+//     console.log(results)
+//   })
+
 module.exports = router
