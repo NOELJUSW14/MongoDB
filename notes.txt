@@ -1,0 +1,80 @@
+Mongo Notes
+
+**Create Database
+"Use" lessondb(Name of Database)
+
+(______________________________________________)
+
+**Insert Data into Database
+
+db.students.insert({name: 'Steve', row:3, os:'Mac', hobbies:['Coding', 'Reading', 'Running'] })
+
+Example:
+`db.places.insert({"continent": "Africa", "country":"Morocco", "majorcities": ["Casablanca", "Fez", "Marrakech"]})`
+or
+`db.students.insert({name: 'Steve', row:3, os:'Mac', hobbies:['Coding', 'Reading', 'Running'] })`
+(_________________________________________________________________________________________________________________________)
+
+**Find All Data from a Collection
+Use .find() - to retrieve all data. The empty "()" grabs all data. Passing a property throught the "()" will look for specific attributes.
+
+`db.[COLLECTION_NAME].find()`
+
+Example:
+
+`db.places.find()`
+ 
+ &&
+  
+  Use .pretty() to format results in readable fashion
+
+  Example:
+
+ `db.places.find().pretty()`
+ (_________________________________________________________________________________________________________________________)
+
+ **Find users by an entry in an array
+Use {$in: XXXX } to parse through array 
+
+
+ Example:
+
+ `db.students.find({"hobbies": {$in: ["Coding"]}})`
+
+(_________________________________________________________________________________________________________________________)
+
+ ***Updating/////- The database will only update the first entry if it matches. $set: will change the information
+ **To update multiple entries, you need to add `{multi: true}`
+
+`db.[COLLECTION_NAME].update()`
+
+Example:
+db.places.update({"country": "Morocco"}, {$set: {"continent": "Antarctica"}})
+
+Example:
+db.places.update({"country": "Morocco"}, {$set: {"continent": "Antarctica"}}, {multi: true})
+
+
+************What do you think will happen when you run the following command, even though there is not a `capital` field in the document?********
+
+???? db.places.update({"country": "Morocco"}, {$set: {"capital": "Rabat"}}) ????
+
+* **Answer**: `$set` will create the field `capital`
+
+
+******** We can update the values in an array with `$push`:
+
+Example:
+db.places.update({"country": "Morocco"}, {$push: {"majorcities": "Agadir"}})
+
+(_________________________________________________________________________________________________________________________)
+
+****Deleting////// - Delete an entry with `db.[COLLECTION_NAME].remove()`
+
+Example:
+db.places.remove({"country": "Morocco"})
+
+****  empty a collection with `db.[COLLECTION_NAME].remove()`
+
+Example:
+db.places.remove({})
